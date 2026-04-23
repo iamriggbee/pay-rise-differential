@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hidden Value of 0.1%</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1410; --paper: #f5f0e8; --gold: #c9960c; --rust: #a83222;
+    --sage: #4a6741; --mid: #7a6a50; --light: #e8e0cc; --accent: #2a4a7f;
+  }
+  body {
+    background: var(--paper); color: var(--ink); font-family: 'DM Mono', monospace;
+    min-height: 100vh; padding: 2rem 1rem;
+    background-image: radial-gradient(ellipse at 10% 20%, rgba(201,150,12,0.06) 0%, transparent 50%),
+                      radial-gradient(ellipse at 90% 80%, rgba(42,74,127,0.05) 0%, transparent 50%);
+  }
+  .page { max-width: 860px; margin: 0 auto; }
+  .header {
+    border-top: 3px solid var(--ink); border-bottom: 1px solid var(--mid);
+    padding: 1.5rem 0 1rem; margin-bottom: 2.5rem;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
+  }
+  .eyebrow { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.4rem; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; line-height: 1; }
+  h1 span { color: var(--gold); }
+  .subtitle { font-size: 0.72rem; color: var(--mid); margin-top: 0.5rem; line-height: 1.5; }
+  .header-right { text-align: right; flex-shrink: 0; }
+  .big-number { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; color: var(--gold); line-height: 1; }
+  .big-label { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); }
+  .controls {
+    background: var(--light); border: 1px solid rgba(0,0,0,0.12);
+    padding: 1.2rem 1.5rem; margin-bottom: 2rem;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;
+  }
+  .control-group label { display: block; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.3rem; }
+  .control-group input[type=range] { width: 100%; accent-color: var(--gold); cursor: pointer; }
+  .control-group .val { font-size: 0.85rem; font-weight: 500; color: var(--ink); margin-top: 0.2rem; }
+  .stats-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--mid); border: 1px solid var(--mid); margin-bottom: 2rem;
+  }
+  .stat-cell { background: var(--paper); padding: 1.2rem 1rem; text-align: center; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; display: block; }
+  .stat-value.gold { color: var(--gold); }
+  .stat-value.blue { color: var(--accent); }
+  .stat-value.green { color: var(--sage); }
+  .stat-label { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); margin-top: 0.3rem; display: block; line-height: 1.4; }
+  .pension-note {
+    background: rgba(42,74,127,0.07); border-left: 3px solid var(--accent);
+    padding: 0.9rem 1.1rem; margin-bottom: 2rem;
+    font-size: 0.65rem; line-height: 1.8; color: var(--mid);
+  }
+  .pension-note strong { color: var(--accent); }
+  .chart-section { margin-bottom: 2rem; }
+  .section-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mid); border-bottom: 1px solid var(--light); padding-bottom: 0.4rem; margin-bottom: 1rem; }
+  .bar-chart { display: flex; flex-direction: column; gap: 5px; }
+  .bar-row { display: flex; align-items: center; gap: 0.5rem; height: 24px; }
+  .bar-year { font-size: 0.58rem; color: var(--mid); width: 38px; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 100%; position: relative; background: rgba(0,0,0,0.05); }
+  .bar-salary { position: absolute; left: 0; top: 0; height: 100%; background: var(--gold); opacity: 0.85; transition: width 0.4s ease; }
+  .bar-pension { position: absolute; top: 0; height: 100%; background: var(--accent); opacity: 0.75; transition: width 0.4s ease, left 0.4s ease; }
+  .bar-val { font-size: 0.6rem; color: var(--mid); width: 56px; flex-shrink: 0; text-align: right; }
+  .chart-legend { display: flex; gap: 1.5rem; margin-top: 0.8rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.62rem; color: var(--mid); }
+  .legend-swatch { width: 12px; height: 12px; flex-shrink: 0; }
+  .toggle-group { display: flex; gap: 0; border: 1px solid var(--mid); overflow: hidden; }
+  .toggle-btn { flex: 1; padding: 0.5rem 0.8rem; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: none; cursor: pointer; color: var(--mid); transition: background 0.2s, color 0.2s; }
+  .toggle-btn.active { background: var(--ink); color: var(--paper); }
+  .compound-section {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--mid); border: 1px solid var(--mid); margin-bottom: 2rem;
+  }
+  .compound-cell { background: var(--paper); padding: 1.4rem; }
+  .compound-cell h3 { font-family: 'Playfair Display', serif; font-size: 0.95rem; margin-bottom: 0.8rem; }
+  .compound-cell p { font-size: 0.68rem; line-height: 1.7; color: var(--mid); }
+  .highlight { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; display: block; margin: 0.5rem 0 0.3rem; }
+  .highlight.rust { color: var(--rust); }
+  .highlight.sage { color: var(--sage); }
+  .rule-box { border: 2px solid var(--ink); padding: 1.8rem; margin-bottom: 2rem; background: var(--ink); color: var(--paper); }
+  .rule-eyebrow { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; }
+  .rule-text { font-family: 'Playfair Display', serif; font-size: clamp(1rem, 2.5vw, 1.45rem); font-weight: 700; line-height: 1.45; }
+  .rule-text span { color: var(--gold); }
+  .rule-sub { font-size: 0.62rem; color: rgba(245,240,232,0.5); margin-top: 0.8rem; line-height: 1.7; }
+  .assumptions { font-size: 0.6rem; color: var(--mid); border-top: 1px solid var(--light); padding-top: 1rem; line-height: 1.8; }
+  @media (max-width: 520px) {
+    .compound-section { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; }
+    .header-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="eyebrow">Pay Negotiation Analysis</div>
+      <h1>The Hidden Value<br>of <span>0.1%</span></h1>
+      <div class="subtitle">How a small pay gap compounds across your career<br>including pensionable pay with employer matching</div>
+    </div>
+    <div class="header-right">
+      <div class="big-number" id="totalValue">£5,789</div>
+      <div class="big-label">total career value</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Starting Salary</label>
+      <input type="range" id="salary" min="20000" max="80000" step="5000" value="30000">
+      <div class="val" id="salaryVal">£30,000</div>
+    </div>
+    <div class="control-group">
+      <label>Years to Retirement</label>
+      <input type="range" id="years" min="5" max="45" step="1" value="25">
+      <div class="val" id="yearsVal">25 years</div>
+    </div>
+    <div class="control-group">
+      <label>CPI Assumption</label>
+      <input type="range" id="cpi" min="1" max="4" step="0.5" value="2.5">
+      <div class="val" id="cpiVal">2.5%</div>
+    </div>
+    <div class="control-group">
+      <label>CPI Rise Frequency</label>
+      <div class="toggle-group" style="margin-top:0.4rem">
+        <button class="toggle-btn active" id="btnAnnual" onclick="setFreq('annual')">Annual</button>
+        <button class="toggle-btn" id="btnBiennial" onclick="setFreq('biennial')">Every 2 yrs</button>
+      </div>
+      <div class="val" id="freqVal" style="margin-top:0.4rem">CPI applied yearly</div>
+    </div>
+    <div class="control-group">
+      <label>Pension Growth Rate</label>
+      <input type="range" id="growth" min="4" max="10" step="0.5" value="7">
+      <div class="val" id="growthVal">7.0%</div>
+    </div>
+  </div>
+
+  <div class="pension-note">
+    <strong>How the pension maths works:</strong> The extra pension contribution is exactly <strong>0.1% from the employee + 0.1% from the employer = 0.2% of that year's salary</strong> — this is independent of the overall scheme contribution rate. In year 1 on a £30,000 salary that's £60. Each year's £60 (growing with CPI) then compounds at the pension growth rate until retirement. Year 1's £60 alone becomes <strong id="yr1Pension">£304</strong> by retirement at 7% growth.
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-cell">
+      <span class="stat-value gold" id="statSalary">£1,025</span>
+      <span class="stat-label">Extra gross salary<br><span id="labelYears">over 25 years</span></span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-value blue" id="statPension">£4,765</span>
+      <span class="stat-label">Extra pension pot<br>at retirement</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-value green" id="statCompound">£1,244</span>
+      <span class="stat-label">Compounding premium<br>vs no CPI growth on gap</span>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="section-label">Cumulative extra value — year by year</div>
+    <div class="bar-chart" id="barChart"></div>
+    <div class="chart-legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:var(--gold);opacity:0.85"></div>
+        Cumulative extra gross salary
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:var(--accent);opacity:0.75"></div>
+        Running pension contributions (nominal, pre-growth)
+      </div>
+    </div>
+  </div>
+
+  <div class="compound-section">
+    <div class="compound-cell">
+      <h3>Annual CPI Rises</h3>
+      <p>Gap grows every year — 0.1% of a CPI-uplifted salary from day one of each new year.</p>
+      <span class="highlight sage" id="annualTotal">£5,789</span>
+      <p>Salary: <span id="annualSal">—</span> · Pension pot: <span id="annualPen">—</span></p>
+    </div>
+    <div class="compound-cell">
+      <h3>Biennial CPI Rises</h3>
+      <p>Gap is frozen for an extra year each cycle — salary base only uplifts every two years.</p>
+      <span class="highlight rust" id="biennialTotal">£5,080</span>
+      <p>Salary: <span id="biennialSal">—</span> · Pension pot: <span id="biennialPen">—</span></p>
+    </div>
+  </div>
+
+  <div class="pension-note" style="margin-bottom:2rem">
+    <strong>Cost of biennial vs annual rises:</strong> switching from annual to biennial CPI uplifts costs approximately <strong id="freqDiff">£709</strong> in total career value on this salary — <strong id="freqDiffPct">12%</strong> less. The loss is amplified by the pension, since smaller contributions in odd years have less time to compound.
+  </div>
+
+  <div class="rule-box">
+    <div class="rule-eyebrow">Rule of Thumb</div>
+    <div class="rule-text">
+      A 0.1% higher salary on <span id="rtSalary">£30,000</span>, with the gap growing with CPI and generating matched pension contributions, is worth about <span id="rtTotal">£5,800</span> over <span id="rtYears">25</span> years.
+    </div>
+    <div class="rule-sub" id="ruleSub"></div>
+  </div>
+
+  <div class="assumptions">
+    ASSUMPTIONS — Starting salary £30,000. Future pay rises are CPI-only, applied each year continuously across the <span id="assumptionsYears">25</span>-year career.
+    Extra pension contribution: 0.1% employee + 0.1% employer = 0.2% of that year's salary, compounding at the selected pension growth rate until retirement.
+    The pension contribution rate shown in the controls is for context only — the extra contribution is always exactly 0.1%+0.1% of the pay gap.
+    All figures are nominal and gross — income tax, NI, and pension tax relief are not modelled.
+    "Without compounding" assumes the annual £ gap stays fixed at its year-1 value throughout the career.
+    The pension pot is a fund value at retirement, not an annuity.
+  </div>
+
+</div>
+
+<script>
+let cpiFreq = 'annual'; // 'annual' or 'biennial'
+
+function setFreq(f) {
+  cpiFreq = f;
+  document.getElementById('btnAnnual').classList.toggle('active', f === 'annual');
+  document.getElementById('btnBiennial').classList.toggle('active', f === 'biennial');
+  document.getElementById('freqVal').textContent = f === 'annual' ? 'CPI applied yearly' : 'CPI applied every 2 yrs';
+  render();
+}
+
+function getCpiMult(y, cpi, freq) {
+  // How many CPI steps have been applied by year y (0-indexed)
+  const steps = freq === 'annual' ? y : Math.floor(y / 2);
+  return Math.pow(1 + cpi, steps);
+}
+
+function calculate(base, gapPct, cpiPct, growthPct, years, freq) {
+  const extra = gapPct / 100;
+  const cpi = cpiPct / 100;
+  const growth = growthPct / 100;
+
+  let salaryTotal = 0, pensionPot = 0;
+  let flatSalaryTotal = 0, flatPensionPot = 0;
+  const flatAnnualSalary = base * extra;
+  const flatAnnualContrib = base * extra * 2;
+
+  let cumSalary = [], cumContrib = [];
+  let runSal = 0, runContrib = 0;
+
+  for (let y = 0; y < years; y++) {
+    const cpiMult = getCpiMult(y, cpi, freq);
+    const extraSal = base * extra * cpiMult;
+    const extraContrib = base * extra * 2 * cpiMult;
+    const yearsToGrow = years - y - 1;
+
+    salaryTotal += extraSal;
+    pensionPot += extraContrib * Math.pow(1 + growth, yearsToGrow);
+
+    flatSalaryTotal += flatAnnualSalary;
+    flatPensionPot += flatAnnualContrib * Math.pow(1 + growth, yearsToGrow);
+
+    runSal += extraSal;
+    runContrib += extraContrib;
+    cumSalary.push(runSal);
+    cumContrib.push(runContrib);
+  }
+
+  const total = salaryTotal + pensionPot;
+  const flatTotal = flatSalaryTotal + flatPensionPot;
+  const yr1PensionGrown = flatAnnualContrib * Math.pow(1 + growth, years - 1);
+
+  return {
+    salaryTotal, pensionPot, total, flatTotal,
+    compoundPremium: total - flatTotal,
+    multiplier: Math.round(total / flatAnnualSalary),
+    flatAnnualSalary, flatPensionPot,
+    pensionShare: Math.round(pensionPot / total * 100),
+    yr1PensionGrown, cumSalary, cumContrib
+  };
+}
+
+function fmt(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
+
+function render() {
+  const base      = +document.getElementById('salary').value;
+  const gapPct    = 0.1;
+  const years     = +document.getElementById('years').value;
+  const cpiPct    = +document.getElementById('cpi').value;
+  const growthPct = +document.getElementById('growth').value;
+
+  document.getElementById('salaryVal').textContent  = '£' + base.toLocaleString('en-GB');
+  document.getElementById('yearsVal').textContent   = years + ' years';
+  document.getElementById('cpiVal').textContent     = cpiPct.toFixed(1) + '%';
+  document.getElementById('growthVal').textContent  = growthPct.toFixed(1) + '%';
+
+  // Calculate both modes always (for comparison panel)
+  const rAnnual   = calculate(base, gapPct, cpiPct, growthPct, years, 'annual');
+  const rBiennial = calculate(base, gapPct, cpiPct, growthPct, years, 'biennial');
+
+  // Active result drives the main stats
+  const r = cpiFreq === 'annual' ? rAnnual : rBiennial;
+
+  document.getElementById('totalValue').textContent   = fmt(r.total);
+  document.getElementById('statSalary').textContent   = fmt(r.salaryTotal);
+  document.getElementById('labelYears').textContent   = `over ${years} years`;
+  document.getElementById('statPension').textContent  = fmt(r.pensionPot);
+  document.getElementById('statCompound').textContent = fmt(Math.max(0, r.compoundPremium));
+  document.getElementById('pensionShare') && (document.getElementById('pensionShare').textContent = r.pensionShare);
+  document.getElementById('yr1Pension').textContent   = fmt(r.yr1PensionGrown);
+
+  // Comparison panel — always shows both
+  document.getElementById('annualTotal').textContent   = fmt(rAnnual.total);
+  document.getElementById('annualSal').textContent     = fmt(rAnnual.salaryTotal);
+  document.getElementById('annualPen').textContent     = fmt(rAnnual.pensionPot);
+  document.getElementById('biennialTotal').textContent = fmt(rBiennial.total);
+  document.getElementById('biennialSal').textContent   = fmt(rBiennial.salaryTotal);
+  document.getElementById('biennialPen').textContent   = fmt(rBiennial.pensionPot);
+
+  const diff = rAnnual.total - rBiennial.total;
+  const diffPct = Math.round(diff / rAnnual.total * 100);
+  document.getElementById('freqDiff').textContent    = fmt(diff);
+  document.getElementById('freqDiffPct').textContent = diffPct + '%';
+
+  // Rule of thumb
+  document.getElementById('rtSalary').textContent = fmt(base);
+  document.getElementById('rtTotal').textContent  = fmt(r.total);
+  document.getElementById('rtYears').textContent  = years;
+  document.getElementById('ruleSub').textContent  =
+    `${fmt(base)} salary · 0.1% gap · ${years} yrs · ${cpiPct}% CPI (${cpiFreq}) · 0.2% extra pension (0.1%+0.1% matched) · ${growthPct}% pension growth`;
+
+  document.getElementById('assumptionsYears').textContent = years;
+
+  // Bar chart
+  const keyYears = years <= 10
+    ? [1, Math.round(years * 0.33), Math.round(years * 0.66), years]
+    : [1, Math.round(years * 0.2), Math.round(years * 0.4), Math.round(years * 0.6), Math.round(years * 0.8), years];
+  const uniqueYears = [...new Set(keyYears)].filter(y => y >= 1 && y <= years);
+
+  const chart = document.getElementById('barChart');
+  chart.innerHTML = '';
+  const maxVal = (r.cumSalary[years - 1] + r.cumContrib[years - 1]) * 1.08;
+
+  uniqueYears.forEach(yr => {
+    const idx = yr - 1;
+    const sal = r.cumSalary[idx];
+    const pen = r.cumContrib[idx];
+    const salPct = (sal / maxVal) * 100;
+    const penPct = (pen / maxVal) * 100;
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML = `
+      <div class="bar-year">Yr ${yr}</div>
+      <div class="bar-track">
+        <div class="bar-salary" style="width:${salPct.toFixed(1)}%"></div>
+        <div class="bar-pension" style="left:${salPct.toFixed(1)}%;width:${penPct.toFixed(1)}%"></div>
+      </div>
+      <div class="bar-val">${fmt(sal + pen)}</div>
+    `;
+    chart.appendChild(row);
+  });
+}
+
+['salary','years','cpi','growth'].forEach(id =>
+  document.getElementById(id).addEventListener('input', render)
+);
+render();
+</script>
+</body>
+</html>
