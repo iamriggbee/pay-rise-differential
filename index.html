@@ -10,7 +10,7 @@
   :root {
     --ink: #1a1410; --paper: #f5f0e8; --gold: #c9960c; --rust: #a83222;
     --sage: #4a6741; --mid: #7a6a50; --light: #e8e0cc; --accent: #2a4a7f;
-    --teal: #2a7f6f;
+    --teal: #2a7f6f; --plum: #6b2d6b;
   }
   body {
     background: var(--paper); color: var(--ink); font-family: 'DM Mono', monospace;
@@ -20,9 +20,10 @@
   }
   .page { max-width: 860px; margin: 0 auto; }
 
+  /* HEADER */
   .header {
     border-top: 3px solid var(--ink); border-bottom: 1px solid var(--mid);
-    padding: 1.5rem 0 1rem; margin-bottom: 2.5rem;
+    padding: 1.5rem 0 1rem; margin-bottom: 2rem;
     display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
   }
   .eyebrow { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.4rem; }
@@ -33,6 +34,27 @@
   .big-number { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; color: var(--gold); line-height: 1; }
   .big-label { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); }
 
+  /* SCHEME TOGGLE — prominent, sits above everything */
+  .scheme-toggle-wrap {
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .scheme-toggle-label {
+    font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mid);
+  }
+  .scheme-toggle {
+    display: flex; border: 2px solid var(--ink); overflow: hidden; border-radius: 2px;
+  }
+  .scheme-btn {
+    padding: 0.55rem 1.4rem; font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    background: transparent; border: none; cursor: pointer; color: var(--mid);
+    transition: background 0.2s, color 0.2s;
+  }
+  .scheme-btn.active { background: var(--ink); color: var(--paper); }
+
+  .hidden { display: none !important; }
+  /* CONTROLS */
   .controls {
     background: var(--light); border: 1px solid rgba(0,0,0,0.12);
     padding: 1.2rem 1.5rem; margin-bottom: 2rem;
@@ -45,6 +67,7 @@
   .toggle-btn { flex: 1; padding: 0.45rem 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; background: transparent; border: none; cursor: pointer; color: var(--mid); transition: background 0.2s, color 0.2s; }
   .toggle-btn.active { background: var(--ink); color: var(--paper); }
 
+  /* STATS */
   .stats-row {
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 1px; background: var(--mid); border: 1px solid var(--mid); margin-bottom: 2rem;
@@ -54,33 +77,40 @@
   .stat-value.gold  { color: var(--gold); }
   .stat-value.blue  { color: var(--accent); }
   .stat-value.teal  { color: var(--teal); }
+  .stat-value.plum  { color: var(--plum); }
   .stat-label { font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-top: 0.3rem; display: block; line-height: 1.4; }
 
+  /* CHARTS */
   .chart-section { margin-bottom: 2.5rem; }
+  .chart-section.hidden { display: none; }
   .chart-header { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--light); padding-bottom: 0.4rem; margin-bottom: 1rem; gap: 1rem; }
   .section-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mid); }
   .chart-total { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
   .chart-total.gold  { color: var(--gold); }
   .chart-total.blue  { color: var(--accent); }
   .chart-total.teal  { color: var(--teal); }
+  .chart-total.plum  { color: var(--plum); }
   .bar-chart { display: flex; flex-direction: column; gap: 5px; }
   .bar-row { display: flex; align-items: center; gap: 0.5rem; height: 26px; }
-  .bar-year { font-size: 0.58rem; color: var(--mid); width: 38px; text-align: right; flex-shrink: 0; }
-  .bar-track { flex: 1; height: 100%; position: relative; background: rgba(0,0,0,0.05); border-radius: 2px; overflow: visible; }
+  .bar-year { font-size: 0.58rem; color: var(--mid); width: 44px; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 100%; position: relative; background: rgba(0,0,0,0.05); border-radius: 2px; }
   .bar-fill { position: absolute; left: 0; top: 0; height: 100%; transition: width 0.35s ease, left 0.35s ease; border-radius: 2px; }
-  .bar-fill.gold  { background: var(--gold); }
-  .bar-fill.blue  { background: var(--accent); }
-  .bar-fill.teal  { background: var(--teal); }
-  .bar-fill.sage  { background: var(--sage); border-radius: 2px 0 0 2px; }
-  .bar-val { font-size: 0.6rem; color: var(--mid); width: 60px; flex-shrink: 0; text-align: right; }
+  .bar-fill.gold { background: var(--gold); }
+  .bar-fill.blue { background: var(--accent); }
+  .bar-fill.teal { background: var(--teal); }
+  .bar-fill.sage { background: var(--sage); border-radius: 2px 0 0 2px; }
+  .bar-fill.plum { background: var(--plum); }
+  .bar-val { font-size: 0.6rem; color: var(--mid); width: 64px; flex-shrink: 0; text-align: right; }
   .chart-legend { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.8rem; }
   .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.62rem; color: var(--mid); }
   .legend-swatch { width: 12px; height: 12px; flex-shrink: 0; border-radius: 2px; }
 
+  /* COMPARISON PANEL */
   .compound-section {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 1px; background: var(--mid); border: 1px solid var(--mid); margin-bottom: 2rem;
   }
+  .compound-section.hidden { display: none; }
   .compound-cell { background: var(--paper); padding: 1.4rem; }
   .compound-cell h3 { font-family: 'Playfair Display', serif; font-size: 0.95rem; margin-bottom: 0.8rem; }
   .compound-cell p { font-size: 0.68rem; line-height: 1.7; color: var(--mid); }
@@ -88,12 +118,14 @@
   .highlight.rust   { color: var(--rust); }
   .highlight.sage-h { color: var(--sage); }
 
+  /* RULE BOX */
   .rule-box { border: 2px solid var(--ink); padding: 1.8rem; margin-bottom: 2rem; background: var(--ink); color: var(--paper); }
   .rule-eyebrow { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; }
   .rule-text { font-family: 'Playfair Display', serif; font-size: clamp(1rem, 2.5vw, 1.45rem); font-weight: 700; line-height: 1.45; }
   .rule-text span { color: var(--gold); }
   .rule-sub { font-size: 0.62rem; color: rgba(245,240,232,0.5); margin-top: 0.8rem; line-height: 1.7; }
 
+  /* INFO NOTE */
   .info-note {
     background: rgba(42,74,127,0.07); border-left: 3px solid var(--accent);
     padding: 0.9rem 1.1rem; margin-bottom: 2rem;
@@ -114,19 +146,30 @@
 <body>
 <div class="page">
 
+  <!-- HEADER -->
   <div class="header">
     <div class="header-left">
       <div class="eyebrow">Pay Negotiation Analysis</div>
       <h1>The Hidden Value<br>of <span>0.1%</span></h1>
-      <div class="subtitle">How a small pay gap compounds across your career<br>including pensionable pay and employer contributions</div>
+      <div class="subtitle" id="headerSubtitle">How a small pay gap compounds across your career<br>including pensionable pay and employer contributions</div>
     </div>
     <div class="header-right">
       <div class="big-number" id="totalValue">—</div>
-      <div class="big-label">total career value</div>
+      <div class="big-label" id="totalLabel">total career value</div>
     </div>
   </div>
 
-  <div class="controls">
+  <!-- SCHEME TOGGLE -->
+  <div class="scheme-toggle-wrap">
+    <div class="scheme-toggle-label">Pension scheme type</div>
+    <div class="scheme-toggle">
+      <button class="scheme-btn active" id="btnDC" onclick="setScheme('dc')">Defined Contribution</button>
+      <button class="scheme-btn" id="btnDB" onclick="setScheme('db')">Defined Benefit</button>
+    </div>
+  </div>
+
+  <!-- ===================== DC CONTROLS ===================== -->
+  <div class="controls" id="dcControls">
     <div class="control-group">
       <label>Starting Salary</label>
       <input type="range" id="salary" min="20000" max="150000" step="5000" value="30000">
@@ -162,11 +205,55 @@
     </div>
   </div>
 
-  <div class="info-note">
-    <strong>What this measures:</strong> All figures show the <strong>marginal difference</strong> caused purely by the 0.1% pay gap. For example, pension figures are not your total pension — they are the extra pension generated because your salary is 0.1% higher.
+  <!-- ===================== DB CONTROLS ===================== -->
+  <div class="controls hidden" id="dbControls">
+    <div class="control-group">
+      <label>Current Salary</label>
+      <input type="range" id="dbSalary" min="20000" max="150000" step="5000" value="30000">
+      <div class="val" id="dbSalaryVal">£30,000</div>
+    </div>
+    <div class="control-group">
+      <label>Years to Retirement</label>
+      <input type="range" id="dbYears" min="1" max="40" step="1" value="15">
+      <div class="val" id="dbYearsVal">15 years</div>
+    </div>
+    <div class="control-group">
+      <label>Total Service at Retirement</label>
+      <input type="range" id="dbService" min="5" max="45" step="1" value="30">
+      <div class="val" id="dbServiceVal">30 years</div>
+    </div>
+    <div class="control-group">
+      <label>Years Pension Drawn</label>
+      <input type="range" id="dbDrawdown" min="5" max="35" step="1" value="20">
+      <div class="val" id="dbDrawdownVal">20 years</div>
+    </div>
+    <div class="control-group">
+      <label>CPI Assumption</label>
+      <input type="range" id="dbCpi" min="1" max="4" step="0.5" value="2.5">
+      <div class="val" id="dbCpiVal">2.5%</div>
+    </div>
+    <div class="control-group">
+      <label>CPI Rise Frequency</label>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="btnDbAnnual" onclick="setDbFreq('annual')">Annual</button>
+        <button class="toggle-btn" id="btnDbBiennial" onclick="setDbFreq('biennial')">Every 2 yrs</button>
+      </div>
+      <div class="val" id="dbFreqVal" style="margin-top:0.4rem">CPI applied yearly</div>
+    </div>
   </div>
 
-  <div class="stats-row">
+  <!-- ===================== DC INFO NOTE ===================== -->
+  <div class="info-note" id="dcInfoNote">
+    <strong>What this measures:</strong> All figures show the <strong>marginal difference</strong> caused purely by the 0.1% pay gap — not your total salary or pension, just the extra generated by being on a 0.1% higher salary base.
+  </div>
+
+  <!-- ===================== DB INFO NOTE ===================== -->
+  <div class="info-note hidden" id="dbInfoNote">
+    <strong>NATS Defined Benefit Scheme (CAAPS):</strong> Accrual rate <strong>1/58th</strong>. Your pension at retirement = (total service years ÷ 58) × final pensionable earnings. The 0.1% gap means your final pensionable earnings are 0.1% higher (after CPI compounding over years to retirement), so your <strong>entire accrued pension</strong> — across all service years — is 0.1% larger. In payment, the pension is uprated by CPI each year.
+  </div>
+
+  <!-- ===================== DC STATS ===================== -->
+  <div class="stats-row" id="dcStats">
     <div class="stat-cell">
       <span class="stat-value gold" id="statSalary">—</span>
       <span class="stat-label">Extra gross salary<br><span id="labelYears">over 25 years</span></span>
@@ -181,8 +268,30 @@
     </div>
   </div>
 
-  <!-- CHART 1 -->
-  <div class="chart-section">
+  <!-- ===================== DB STATS ===================== -->
+  <div class="stats-row hidden" id="dbStats" style="grid-template-columns: repeat(4, 1fr)">
+    <div class="stat-cell">
+      <span class="stat-value gold" id="dbStatSalary">—</span>
+      <span class="stat-label">Extra gross salary<br><span id="dbLabelYears">over 15 years</span></span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-value plum" id="dbStatAnnualPension">—</span>
+      <span class="stat-label">Extra annual pension<br>in year 1 of retirement</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-value teal" id="dbStatLifetime">—</span>
+      <span class="stat-label">Extra lifetime pension<br>over drawdown period</span>
+    </div>
+    <div class="stat-cell" style="background:var(--ink)">
+      <span class="stat-value gold" id="dbStatTotal" style="color:var(--gold)">—</span>
+      <span class="stat-label" style="color:rgba(245,240,232,0.6)">Combined total<br>salary + lifetime pension</span>
+    </div>
+  </div>
+
+  <!-- ===================== DC CHARTS ===================== -->
+
+  <!-- DC Chart 1: Salary -->
+  <div class="chart-section" id="dcChart1">
     <div class="chart-header">
       <div class="section-label">Chart 1 — Extra gross salary accumulated</div>
       <div class="chart-total gold" id="chartTotalSalary">—</div>
@@ -191,13 +300,13 @@
     <div class="chart-legend">
       <div class="legend-item">
         <div class="legend-swatch" style="background:var(--gold)"></div>
-        Extra gross salary (0.1% of salary, growing with CPI each year)
+        Extra gross salary (0.1% of salary, growing with CPI)
       </div>
     </div>
   </div>
 
-  <!-- CHART 2 -->
-  <div class="chart-section">
+  <!-- DC Chart 2: Employer contributions -->
+  <div class="chart-section" id="dcChart2">
     <div class="chart-header">
       <div class="section-label">Chart 2 — Extra employer contributions paid in</div>
       <div class="chart-total blue" id="chartTotalEr">—</div>
@@ -211,8 +320,8 @@
     </div>
   </div>
 
-  <!-- CHART 3 -->
-  <div class="chart-section">
+  <!-- DC Chart 3: Pension pot -->
+  <div class="chart-section" id="dcChart3">
     <div class="chart-header">
       <div class="section-label">Chart 3 — Extra pension pot projected to retirement</div>
       <div class="chart-total teal" id="chartTotalPension">—</div>
@@ -230,8 +339,55 @@
     </div>
   </div>
 
-  <!-- ANNUAL vs BIENNIAL -->
-  <div class="compound-section">
+  <!-- ===================== DB CHARTS ===================== -->
+
+  <!-- DB Chart 1: Salary (same logic as DC) -->
+  <div class="chart-section hidden" id="dbChart1">
+    <div class="chart-header">
+      <div class="section-label">Chart 1 — Extra gross salary accumulated to retirement</div>
+      <div class="chart-total gold" id="dbChartTotalSalary">—</div>
+    </div>
+    <div class="bar-chart" id="dbChartSalary"></div>
+    <div class="chart-legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:var(--gold)"></div>
+        Extra gross salary (0.1% of salary, growing with CPI each year)
+      </div>
+    </div>
+  </div>
+
+  <!-- DB Chart 2: Annual pension income in retirement -->
+  <div class="chart-section hidden" id="dbChart2">
+    <div class="chart-header">
+      <div class="section-label">Chart 2 — Extra annual pension income during retirement</div>
+      <div class="chart-total plum" id="dbChartTotalAnnual">—</div>
+    </div>
+    <div class="bar-chart" id="dbChartAnnual"></div>
+    <div class="chart-legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:var(--plum)"></div>
+        Extra annual pension income (uprated by CPI each year in payment)
+      </div>
+    </div>
+  </div>
+
+  <!-- DB Chart 3: Cumulative lifetime pension -->
+  <div class="chart-section hidden" id="dbChart3">
+    <div class="chart-header">
+      <div class="section-label">Chart 3 — Cumulative extra lifetime pension received</div>
+      <div class="chart-total teal" id="dbChartTotalLifetime">—</div>
+    </div>
+    <div class="bar-chart" id="dbChartLifetime"></div>
+    <div class="chart-legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:var(--teal)"></div>
+        Cumulative extra pension received (CPI-uprated each year in payment)
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== DC COMPARISON PANEL ===================== -->
+  <div class="compound-section" id="dcComparison">
     <div class="compound-cell">
       <h3>Annual CPI Rises</h3>
       <p>Gap grows every year — 0.1% of a CPI-uplifted salary from the start of each new year.</p>
@@ -245,28 +401,67 @@
       <p>Salary: <span id="biennialSal">—</span> · Pension pot: <span id="biennialPen">—</span></p>
     </div>
   </div>
-  <div class="info-note" style="margin-bottom:2rem">
+  <div class="info-note" id="dcFreqNote" style="margin-bottom:2rem">
     <strong>Cost of biennial vs annual rises:</strong> switching from annual to biennial CPI uplifts costs approximately <strong id="freqDiff">—</strong> in total career value — <strong id="freqDiffPct">—</strong> less.
   </div>
 
+  <!-- ===================== DB COMPARISON PANEL ===================== -->
+  <div class="compound-section hidden" id="dbComparison">
+    <div class="compound-cell">
+      <h3>Annual CPI Rises</h3>
+      <p>Final pensionable earnings grow with CPI every year — the 0.1% gap compounds to a larger figure at retirement.</p>
+      <span class="highlight sage-h" id="dbAnnualLifetime">—</span>
+      <p>Extra annual pension: <span id="dbAnnualPension">—</span> · Lifetime: <span id="dbAnnualLifetimeVal">—</span></p>
+    </div>
+    <div class="compound-cell">
+      <h3>Biennial CPI Rises</h3>
+      <p>Final pensionable earnings only uplifted every two years — the gap reaches retirement slightly smaller.</p>
+      <span class="highlight rust" id="dbBiennialLifetime">—</span>
+      <p>Extra annual pension: <span id="dbBiennialPension">—</span> · Lifetime: <span id="dbBiennialLifetimeVal">—</span></p>
+    </div>
+  </div>
+  <div class="info-note hidden" id="dbFreqNote" style="margin-bottom:2rem">
+    <strong>Cost of biennial vs annual rises (DB):</strong> switching from annual to biennial CPI uplifts reduces lifetime pension value by approximately <strong id="dbFreqDiff">—</strong> — <strong id="dbFreqDiffPct">—</strong> less over the drawdown period.
+  </div>
+
+  <!-- ===================== RULE OF THUMB ===================== -->
   <div class="rule-box">
     <div class="rule-eyebrow">Rule of Thumb</div>
-    <div class="rule-text">
+    <div class="rule-text" id="ruleText">
       A 0.1% higher salary on <span id="rtSalary">£30,000</span>, with the gap growing with CPI and generating matched pension contributions, is worth about <span id="rtTotal">—</span> over <span id="rtYears">25</span> years.
     </div>
     <div class="rule-sub" id="ruleSub"></div>
   </div>
 
-  <div class="assumptions">
-    ASSUMPTIONS — 0.1% pay gap fixed throughout. All figures show the marginal extra from being on a 0.1% higher salary — not total pension or salary values.
-    Employee contributes selected rate; employer contributes double that rate. Pension contributions grow at the selected growth rate until retirement.
-    CPI applied at selected frequency. All figures nominal and gross — income tax and NI not modelled.
-    Pension pot is a projected fund value at retirement, not an annuity. Career length: <span id="assumptionsYears">25</span> years.
+  <div class="assumptions" id="assumptionsText">
+    ASSUMPTIONS — 0.1% pay gap fixed. DC: all figures show marginal extra from 0.1% higher salary. Employee contributes selected rate; employer double. Pension contributions grow at selected rate until retirement. DB: accrual rate 1/58th, final pensionable earnings basis. Pension in payment uprated by CPI annually. All figures nominal and gross — tax and NI not modelled.
   </div>
 
 </div>
+
 <script>
-let cpiFreq = 'annual';
+// ─── State ───────────────────────────────────────────────
+let scheme   = 'dc';   // 'dc' | 'db'
+let cpiFreq  = 'annual';
+let dbCpiFreq = 'annual';
+
+const DB_ACCRUAL = 1 / 58;
+const GAP = 0.001;
+
+// ─── Scheme toggle ───────────────────────────────────────
+function setScheme(s) {
+  scheme = s;
+  document.getElementById('btnDC').classList.toggle('active', s === 'dc');
+  document.getElementById('btnDB').classList.toggle('active', s === 'db');
+
+  const dcEls = ['dcControls','dcInfoNote','dcStats','dcChart1','dcChart2','dcChart3','dcComparison','dcFreqNote'];
+  const dbEls = ['dbControls','dbInfoNote','dbStats','dbChart1','dbChart2','dbChart3','dbComparison','dbFreqNote'];
+
+  dcEls.forEach(id => document.getElementById(id).classList.toggle('hidden', s !== 'dc'));
+  dbEls.forEach(id => document.getElementById(id).classList.toggle('hidden', s !== 'db'));
+
+  render();
+}
 
 function setFreq(f) {
   cpiFreq = f;
@@ -276,65 +471,31 @@ function setFreq(f) {
   render();
 }
 
+function setDbFreq(f) {
+  dbCpiFreq = f;
+  document.getElementById('btnDbAnnual').classList.toggle('active', f === 'annual');
+  document.getElementById('btnDbBiennial').classList.toggle('active', f === 'biennial');
+  document.getElementById('dbFreqVal').textContent = f === 'annual' ? 'CPI applied yearly' : 'CPI applied every 2 yrs';
+  render();
+}
+
+// ─── Helpers ─────────────────────────────────────────────
 function getCpiMult(y, cpi, freq) {
   const steps = freq === 'annual' ? y : Math.floor(y / 2);
   return Math.pow(1 + cpi, steps);
 }
 
-function calculate(base, cpiPct, growthPct, years, freq, eePct, erPct) {
-  const GAP    = 0.001;
-  const cpi    = cpiPct    / 100;
-  const growth = growthPct / 100;
-  const eeRate = eePct     / 100;
-  const erRate = erPct     / 100;
+function fmt(n)   { return '£' + Math.round(n).toLocaleString('en-GB'); }
+function fmtD(n)  { return '£' + n.toFixed(2); }   // for small annual values
 
-  let cumSalary = [], cumErContrib = [], cumPensionEe = [], cumPensionEr = [];
-  let runSal = 0, runErContrib = 0, runPensionEe = 0, runPensionEr = 0;
-  let totalSalary = 0, totalErContrib = 0, totalPensionEe = 0, totalPensionEr = 0;
-
-  for (let y = 0; y < years; y++) {
-    const cpiMult     = getCpiMult(y, cpi, freq);
-    const extraSal    = base * GAP * cpiMult;          // extra gross salary this year
-    const eeContrib   = extraSal * eeRate;              // extra employee pension contribution
-    const erContrib   = extraSal * erRate;              // extra employer pension contribution
-    const yearsToGrow = years - y - 1;
-
-    totalSalary    += extraSal;
-    totalErContrib += erContrib;
-
-    const eeFV = eeContrib * Math.pow(1 + growth, yearsToGrow);
-    const erFV = erContrib * Math.pow(1 + growth, yearsToGrow);
-    totalPensionEe += eeFV;
-    totalPensionEr += erFV;
-
-    runSal       += extraSal;
-    runErContrib += erContrib;
-    runPensionEe += eeFV;
-    runPensionEr += erFV;
-
-    cumSalary.push(runSal);
-    cumErContrib.push(runErContrib);
-    cumPensionEe.push(runPensionEe);
-    cumPensionEr.push(runPensionEr);
-  }
-
-  const totalPensionPot = totalPensionEe + totalPensionEr;
-  const total = totalSalary + totalPensionPot;
-
-  return { totalSalary, totalErContrib, totalPensionEe, totalPensionEr, totalPensionPot, total,
-           cumSalary, cumErContrib, cumPensionEe, cumPensionEr };
+function keyYearsFor(n) {
+  const ky = n <= 10
+    ? [1, Math.round(n * 0.33), Math.round(n * 0.66), n]
+    : [1, Math.round(n * 0.2), Math.round(n * 0.4), Math.round(n * 0.6), Math.round(n * 0.8), n];
+  return [...new Set(ky)].filter(y => y >= 1 && y <= n);
 }
 
-function fmt(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
-
-function keyYearsFor(years) {
-  const ky = years <= 10
-    ? [1, Math.round(years * 0.33), Math.round(years * 0.66), years]
-    : [1, Math.round(years * 0.2), Math.round(years * 0.4), Math.round(years * 0.6), Math.round(years * 0.8), years];
-  return [...new Set(ky)].filter(y => y >= 1 && y <= years);
-}
-
-function buildSingleBar(el, ky, data, cls, maxVal) {
+function buildBar(el, ky, data, cls, maxVal, labelPrefix) {
   el.innerHTML = '';
   ky.forEach(yr => {
     const val = data[yr - 1];
@@ -342,36 +503,112 @@ function buildSingleBar(el, ky, data, cls, maxVal) {
     const row = document.createElement('div');
     row.className = 'bar-row';
     row.innerHTML = `
-      <div class="bar-year">Yr ${yr}</div>
-      <div class="bar-track">
-        <div class="bar-fill ${cls}" style="width:${pct.toFixed(1)}%"></div>
-      </div>
+      <div class="bar-year">${labelPrefix || 'Yr'} ${yr}</div>
+      <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct.toFixed(1)}%"></div></div>
       <div class="bar-val">${fmt(val)}</div>`;
     el.appendChild(row);
   });
 }
 
-function buildSplitBar(el, ky, dataEe, dataEr, maxVal) {
+function buildSplitBar(el, ky, dataA, dataB, maxVal) {
   el.innerHTML = '';
   ky.forEach(yr => {
-    const ee  = dataEe[yr - 1];
-    const er  = dataEr[yr - 1];
-    const eePct = Math.min((ee / maxVal) * 100, 99.5);
-    const erPct = Math.min((er / maxVal) * 100, 99.5 - eePct);
+    const a = dataA[yr - 1], b = dataB[yr - 1];
+    const aPct = Math.min((a / maxVal) * 100, 99.5);
+    const bPct = Math.min((b / maxVal) * 100, 99.5 - aPct);
     const row = document.createElement('div');
     row.className = 'bar-row';
     row.innerHTML = `
       <div class="bar-year">Yr ${yr}</div>
       <div class="bar-track">
-        <div class="bar-fill sage" style="width:${eePct.toFixed(1)}%"></div>
-        <div class="bar-fill teal" style="left:${eePct.toFixed(1)}%;width:${erPct.toFixed(1)}%"></div>
+        <div class="bar-fill sage" style="width:${aPct.toFixed(1)}%"></div>
+        <div class="bar-fill teal" style="left:${aPct.toFixed(1)}%;width:${bPct.toFixed(1)}%"></div>
       </div>
-      <div class="bar-val">${fmt(ee + er)}</div>`;
+      <div class="bar-val">${fmt(a + b)}</div>`;
     el.appendChild(row);
   });
 }
 
+// ─── DC Calculation ──────────────────────────────────────
+function calcDC(base, cpiPct, growthPct, years, freq, eePct, erPct) {
+  const cpi = cpiPct / 100, growth = growthPct / 100;
+  const eeRate = eePct / 100, erRate = erPct / 100;
+  let cumSalary = [], cumErContrib = [], cumPensionEe = [], cumPensionEr = [];
+  let runSal = 0, runEr = 0, runPEe = 0, runPEr = 0;
+  let totalSalary = 0, totalEr = 0, totalPEe = 0, totalPEr = 0;
+
+  for (let y = 0; y < years; y++) {
+    const m = getCpiMult(y, cpi, freq);
+    const extraSal = base * GAP * m;
+    const eeC = extraSal * eeRate, erC = extraSal * erRate;
+    const ttg = years - y - 1;
+    totalSalary += extraSal; totalEr += erC;
+    const eeFV = eeC * Math.pow(1 + growth, ttg);
+    const erFV = erC * Math.pow(1 + growth, ttg);
+    totalPEe += eeFV; totalPEr += erFV;
+    runSal += extraSal; runEr += erC; runPEe += eeFV; runPEr += erFV;
+    cumSalary.push(runSal); cumErContrib.push(runEr);
+    cumPensionEe.push(runPEe); cumPensionEr.push(runPEr);
+  }
+  const totalPot = totalPEe + totalPEr;
+  return { totalSalary, totalEr, totalPEe, totalPEr, totalPot,
+           total: totalSalary + totalPot,
+           cumSalary, cumErContrib, cumPensionEe, cumPensionEr };
+}
+
+// ─── DB Calculation ──────────────────────────────────────
+// Key logic:
+// 1. The 0.1% gap applies to current salary. Over years-to-retirement, salary grows by CPI.
+//    So final pensionable earnings gap = base * 0.1% * CPI^yearsToRetirement
+// 2. Extra annual pension = DB_ACCRUAL * totalService * finalSalaryGap
+// 3. In payment, pension is uprated by CPI each year of drawdown
+// 4. Salary chart: cumulative extra gross salary each working year (same CPI logic as DC)
+
+function calcDB(base, cpiPct, yearsToRetire, totalService, drawdownYears, freq) {
+  const cpi = cpiPct / 100;
+
+  // --- Salary accumulation to retirement (same as DC, just no pension pot) ---
+  let cumSalary = [];
+  let runSal = 0, totalSalary = 0;
+  for (let y = 0; y < yearsToRetire; y++) {
+    const m = getCpiMult(y, cpi, freq);
+    const extraSal = base * GAP * m;
+    totalSalary += extraSal;
+    runSal += extraSal;
+    cumSalary.push(runSal);
+  }
+
+  // --- DB pension gap ---
+  // Final salary will be base * CPI^yearsToRetire (approximately)
+  // The 0.1% gap means final pensionable earnings are 0.1% higher than they would be
+  // We compound the gap itself with CPI over the years to retirement
+  const finalSalaryGap = base * GAP * Math.pow(1 + cpi, yearsToRetire);
+  const extraAnnualPension = DB_ACCRUAL * totalService * finalSalaryGap;
+
+  // --- Drawdown: pension uprated by CPI each year in payment ---
+  let cumLifetime = [], cumAnnual = [];
+  let runLifetime = 0;
+  for (let y = 0; y < drawdownYears; y++) {
+    const annualThisYear = extraAnnualPension * Math.pow(1 + cpi, y);
+    cumAnnual.push(annualThisYear);
+    runLifetime += annualThisYear;
+    cumLifetime.push(runLifetime);
+  }
+
+  const totalLifetime = runLifetime;
+  const total = totalSalary + totalLifetime;
+
+  return { totalSalary, extraAnnualPension, totalLifetime, total,
+           cumSalary, cumAnnual, cumLifetime, finalSalaryGap };
+}
+
+// ─── Main render ─────────────────────────────────────────
 function render() {
+  if (scheme === 'dc') renderDC();
+  else renderDB();
+}
+
+function renderDC() {
   const base      = +document.getElementById('salary').value;
   const years     = +document.getElementById('years').value;
   const eePct     = +document.getElementById('eePension').value;
@@ -385,53 +622,115 @@ function render() {
   document.getElementById('cpiVal').textContent       = cpiPct.toFixed(1) + '%';
   document.getElementById('growthVal').textContent    = growthPct.toFixed(1) + '%';
 
-  const r         = calculate(base, cpiPct, growthPct, years, cpiFreq,    eePct, erPct);
-  const rAnnual   = calculate(base, cpiPct, growthPct, years, 'annual',   eePct, erPct);
-  const rBiennial = calculate(base, cpiPct, growthPct, years, 'biennial', eePct, erPct);
+  const r  = calcDC(base, cpiPct, growthPct, years, cpiFreq,    eePct, erPct);
+  const rA = calcDC(base, cpiPct, growthPct, years, 'annual',   eePct, erPct);
+  const rB = calcDC(base, cpiPct, growthPct, years, 'biennial', eePct, erPct);
 
-  document.getElementById('totalValue').textContent      = fmt(r.total);
-  document.getElementById('statSalary').textContent      = fmt(r.totalSalary);
-  document.getElementById('statErContrib').textContent   = fmt(r.totalErContrib);
-  document.getElementById('statPensionPot').textContent  = fmt(r.totalPensionPot);
-  document.getElementById('labelYears').textContent      = `over ${years} years`;
+  document.getElementById('totalValue').textContent     = fmt(r.total);
+  document.getElementById('totalLabel').textContent     = 'total career value';
+  document.getElementById('statSalary').textContent     = fmt(r.totalSalary);
+  document.getElementById('statErContrib').textContent  = fmt(r.totalEr);
+  document.getElementById('statPensionPot').textContent = fmt(r.totalPot);
+  document.getElementById('labelYears').textContent     = `over ${years} years`;
   document.getElementById('chartTotalSalary').textContent  = fmt(r.totalSalary);
-  document.getElementById('chartTotalEr').textContent      = fmt(r.totalErContrib);
-  document.getElementById('chartTotalPension').textContent = fmt(r.totalPensionPot);
-
-  // Update legend text with current rates
+  document.getElementById('chartTotalEr').textContent      = fmt(r.totalEr);
+  document.getElementById('chartTotalPension').textContent = fmt(r.totalPot);
   document.getElementById('erLegend').textContent    = `Extra employer contributions (${erPct}% × 0.1% of salary)`;
   document.getElementById('eePenLegend').textContent = `From employee contributions (${eePct}% × 0.1% of salary, grown to retirement)`;
   document.getElementById('erPenLegend').textContent = `From employer contributions (${erPct}% × 0.1% of salary, grown to retirement)`;
 
   const ky = keyYearsFor(years);
-  buildSingleBar(document.getElementById('chartSalary'),  ky, r.cumSalary,    'gold', r.cumSalary[years-1]    * 1.08);
-  buildSingleBar(document.getElementById('chartEr'),      ky, r.cumErContrib, 'blue', r.cumErContrib[years-1] * 1.08);
-  buildSplitBar( document.getElementById('chartPension'), ky, r.cumPensionEe, r.cumPensionEr,
-                 (r.cumPensionEe[years-1] + r.cumPensionEr[years-1]) * 1.08);
+  buildBar(document.getElementById('chartSalary'),  ky, r.cumSalary,    'gold', r.cumSalary[years-1]    * 1.08);
+  buildBar(document.getElementById('chartEr'),      ky, r.cumErContrib, 'blue', r.cumErContrib[years-1] * 1.08);
+  buildSplitBar(document.getElementById('chartPension'), ky, r.cumPensionEe, r.cumPensionEr,
+    (r.cumPensionEe[years-1] + r.cumPensionEr[years-1]) * 1.08);
 
-  document.getElementById('annualTotal').textContent   = fmt(rAnnual.total);
-  document.getElementById('annualSal').textContent     = fmt(rAnnual.totalSalary);
-  document.getElementById('annualPen').textContent     = fmt(rAnnual.totalPensionPot);
-  document.getElementById('biennialTotal').textContent = fmt(rBiennial.total);
-  document.getElementById('biennialSal').textContent   = fmt(rBiennial.totalSalary);
-  document.getElementById('biennialPen').textContent   = fmt(rBiennial.totalPensionPot);
-
-  const diff    = rAnnual.total - rBiennial.total;
-  const diffPct = Math.round(diff / rAnnual.total * 100);
+  document.getElementById('annualTotal').textContent   = fmt(rA.total);
+  document.getElementById('annualSal').textContent     = fmt(rA.totalSalary);
+  document.getElementById('annualPen').textContent     = fmt(rA.totalPot);
+  document.getElementById('biennialTotal').textContent = fmt(rB.total);
+  document.getElementById('biennialSal').textContent   = fmt(rB.totalSalary);
+  document.getElementById('biennialPen').textContent   = fmt(rB.totalPot);
+  const diff = rA.total - rB.total;
   document.getElementById('freqDiff').textContent    = fmt(diff);
-  document.getElementById('freqDiffPct').textContent = diffPct + '%';
+  document.getElementById('freqDiffPct').textContent = Math.round(diff / rA.total * 100) + '%';
 
-  document.getElementById('rtSalary').textContent = fmt(base);
-  document.getElementById('rtTotal').textContent  = fmt(r.total);
-  document.getElementById('rtYears').textContent  = years;
-  document.getElementById('ruleSub').textContent  =
+  document.getElementById('ruleText').innerHTML =
+    `A 0.1% higher salary on <span id="rtSalary">${fmt(base)}</span>, with the gap growing with CPI and generating matched pension contributions, is worth about <span>${fmt(r.total)}</span> over <span>${years}</span> years.`;
+  document.getElementById('ruleSub').textContent =
     `${fmt(base)} salary · 0.1% gap · ${years} yrs · ${cpiPct}% CPI (${cpiFreq}) · ${eePct}% employee / ${erPct}% employer pension · ${growthPct}% growth`;
-  document.getElementById('assumptionsYears').textContent = years;
 }
 
+function renderDB() {
+  const base        = +document.getElementById('dbSalary').value;
+  const yearsToRet  = +document.getElementById('dbYears').value;
+  const totalSvc    = +document.getElementById('dbService').value;
+  const drawdown    = +document.getElementById('dbDrawdown').value;
+  const cpiPct      = +document.getElementById('dbCpi').value;
+
+  document.getElementById('dbSalaryVal').textContent   = '£' + base.toLocaleString('en-GB');
+  document.getElementById('dbYearsVal').textContent    = yearsToRet + ' years';
+  document.getElementById('dbServiceVal').textContent  = totalSvc + ' years';
+  document.getElementById('dbDrawdownVal').textContent = drawdown + ' years';
+  document.getElementById('dbCpiVal').textContent      = cpiPct.toFixed(1) + '%';
+
+  const r  = calcDB(base, cpiPct, yearsToRet, totalSvc, drawdown, dbCpiFreq);
+  const rA = calcDB(base, cpiPct, yearsToRet, totalSvc, drawdown, 'annual');
+  const rB = calcDB(base, cpiPct, yearsToRet, totalSvc, drawdown, 'biennial');
+
+  // Header shows combined salary + lifetime pension
+  const dbTotal = r.totalSalary + r.totalLifetime;
+  document.getElementById('totalValue').textContent = fmt(dbTotal);
+  document.getElementById('totalLabel').textContent = 'salary + lifetime pension';
+
+  document.getElementById('dbStatSalary').textContent        = fmt(r.totalSalary);
+  document.getElementById('dbStatAnnualPension').textContent = fmt(r.extraAnnualPension);
+  document.getElementById('dbStatLifetime').textContent      = fmt(r.totalLifetime);
+  document.getElementById('dbStatTotal').textContent         = fmt(dbTotal);
+  document.getElementById('dbLabelYears').textContent        = `over ${yearsToRet} working years`;
+
+  document.getElementById('dbChartTotalSalary').textContent  = fmt(r.totalSalary);
+  document.getElementById('dbChartTotalAnnual').textContent  = fmt(r.extraAnnualPension * drawdown); // approx
+  document.getElementById('dbChartTotalLifetime').textContent = fmt(r.totalLifetime);
+
+  // DB Chart 1: salary accumulation during working years
+  const kySal = keyYearsFor(yearsToRet);
+  buildBar(document.getElementById('dbChartSalary'), kySal, r.cumSalary, 'gold',
+    r.cumSalary[yearsToRet - 1] * 1.08);
+
+  // DB Chart 2: annual pension income each year of retirement
+  const kyDraw = keyYearsFor(drawdown);
+  buildBar(document.getElementById('dbChartAnnual'), kyDraw, r.cumAnnual, 'plum',
+    r.cumAnnual[drawdown - 1] * 1.08, 'Ret');
+
+  // DB Chart 3: cumulative lifetime pension
+  buildBar(document.getElementById('dbChartLifetime'), kyDraw, r.cumLifetime, 'teal',
+    r.cumLifetime[drawdown - 1] * 1.08, 'Ret');
+
+  // Comparison panel
+  document.getElementById('dbAnnualLifetime').textContent    = fmt(rA.totalLifetime);
+  document.getElementById('dbAnnualPension').textContent     = fmt(rA.extraAnnualPension);
+  document.getElementById('dbAnnualLifetimeVal').textContent = fmt(rA.totalLifetime);
+  document.getElementById('dbBiennialLifetime').textContent  = fmt(rB.totalLifetime);
+  document.getElementById('dbBiennialPension').textContent   = fmt(rB.extraAnnualPension);
+  document.getElementById('dbBiennialLifetimeVal').textContent = fmt(rB.totalLifetime);
+
+  const diff = rA.totalLifetime - rB.totalLifetime;
+  document.getElementById('dbFreqDiff').textContent    = fmt(diff);
+  document.getElementById('dbFreqDiffPct').textContent = Math.round(diff / rA.totalLifetime * 100) + '%';
+
+  document.getElementById('ruleText').innerHTML =
+    `A 0.1% higher salary on <span>${fmt(base)}</span>, across <span>${totalSvc}</span> years of DB service at 1/58th accrual, generates <span>${fmt(r.extraAnnualPension)}</span> extra pension per year — worth <span>${fmt(r.totalLifetime)}</span> over a <span>${drawdown}</span>-year retirement, plus <span>${fmt(r.totalSalary)}</span> in extra gross salary: <span>${fmt(dbTotal)}</span> combined.`;
+  document.getElementById('ruleSub').textContent =
+    `${fmt(base)} salary · 0.1% gap · ${yearsToRet} yrs to retirement · ${totalSvc} yrs total service · 1/58th accrual · ${cpiPct}% CPI (${dbCpiFreq}) · ${drawdown} yr drawdown`;
+}
+
+// ─── Event listeners ─────────────────────────────────────
 ['salary','years','eePension','cpi','growth'].forEach(id =>
-  document.getElementById(id).addEventListener('input', render)
-);
+  document.getElementById(id).addEventListener('input', render));
+['dbSalary','dbYears','dbService','dbDrawdown','dbCpi'].forEach(id =>
+  document.getElementById(id).addEventListener('input', render));
+
 render();
 </script>
 </body>
