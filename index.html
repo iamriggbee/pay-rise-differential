@@ -61,7 +61,8 @@
   .bar-year { font-size: 0.58rem; color: var(--mid); width: 38px; text-align: right; flex-shrink: 0; }
   .bar-track { flex: 1; height: 100%; position: relative; background: rgba(0,0,0,0.05); }
   .bar-salary { position: absolute; left: 0; top: 0; height: 100%; background: var(--gold); opacity: 0.85; transition: width 0.4s ease; }
-  .bar-pension { position: absolute; top: 0; height: 100%; background: var(--accent); opacity: 0.75; transition: width 0.4s ease, left 0.4s ease; }
+  .bar-pension-ee { position: absolute; top: 0; height: 100%; background: var(--accent); opacity: 0.85; transition: width 0.4s ease, left 0.4s ease; }
+  .bar-pension-er { position: absolute; top: 0; height: 100%; background: var(--sage); opacity: 0.85; transition: width 0.4s ease, left 0.4s ease; }
   .bar-val { font-size: 0.6rem; color: var(--mid); width: 56px; flex-shrink: 0; text-align: right; }
   .chart-legend { display: flex; gap: 1.5rem; margin-top: 0.8rem; }
   .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.62rem; color: var(--mid); }
@@ -111,7 +112,7 @@
   <div class="controls">
     <div class="control-group">
       <label>Starting Salary</label>
-      <input type="range" id="salary" min="20000" max="80000" step="5000" value="30000">
+      <input type="range" id="salary" min="20000" max="150000" step="5000" value="30000">
       <div class="val" id="salaryVal">£30,000</div>
     </div>
     <div class="control-group">
@@ -167,8 +168,12 @@
         Cumulative extra gross salary
       </div>
       <div class="legend-item">
-        <div class="legend-swatch" style="background:var(--accent);opacity:0.75"></div>
-        Running pension contributions (nominal, pre-growth)
+        <div class="legend-swatch" style="background:var(--accent);opacity:0.85"></div>
+        Employee pension contributions
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:var(--sage);opacity:0.85"></div>
+        Employer matched contributions
       </div>
     </div>
   </div>
@@ -238,25 +243,28 @@ function calculate(base, gapPct, cpiPct, growthPct, years, freq) {
   const flatAnnualSalary = base * extra;
   const flatAnnualContrib = base * extra * 2;
 
-  let cumSalary = [], cumContrib = [];
-  let runSal = 0, runContrib = 0;
+  let cumSalary = [], cumContribEe = [], cumContribEr = [];
+  let runSal = 0, runContribEe = 0, runContribEr = 0;
 
   for (let y = 0; y < years; y++) {
     const cpiMult = getCpiMult(y, cpi, freq);
     const extraSal = base * extra * cpiMult;
-    const extraContrib = base * extra * 2 * cpiMult;
+    const extraContribEe = base * extra * cpiMult; // employee: 0.1% of salary
+    const extraContribEr = base * extra * cpiMult; // employer: matched 0.1%
     const yearsToGrow = years - y - 1;
 
     salaryTotal += extraSal;
-    pensionPot += extraContrib * Math.pow(1 + growth, yearsToGrow);
+    pensionPot += (extraContribEe + extraContribEr) * Math.pow(1 + growth, yearsToGrow);
 
     flatSalaryTotal += flatAnnualSalary;
     flatPensionPot += flatAnnualContrib * Math.pow(1 + growth, yearsToGrow);
 
     runSal += extraSal;
-    runContrib += extraContrib;
+    runContribEe += extraContribEe;
+    runContribEr += extraContribEr;
     cumSalary.push(runSal);
-    cumContrib.push(runContrib);
+    cumContribEe.push(runContribEe);
+    cumContribEr.push(runContribEr);
   }
 
   const total = salaryTotal + pensionPot;
@@ -269,7 +277,7 @@ function calculate(base, gapPct, cpiPct, growthPct, years, freq) {
     multiplier: Math.round(total / flatAnnualSalary),
     flatAnnualSalary, flatPensionPot,
     pensionShare: Math.round(pensionPot / total * 100),
-    yr1PensionGrown, cumSalary, cumContrib
+    yr1PensionGrown, cumSalary, cumContribEe, cumContribEr
   };
 }
 
@@ -332,23 +340,26 @@ function render() {
 
   const chart = document.getElementById('barChart');
   chart.innerHTML = '';
-  const maxVal = (r.cumSalary[years - 1] + r.cumContrib[years - 1]) * 1.08;
+  const maxVal = (r.cumSalary[years - 1] + r.cumContribEe[years - 1] + r.cumContribEr[years - 1]) * 1.08;
 
   uniqueYears.forEach(yr => {
     const idx = yr - 1;
     const sal = r.cumSalary[idx];
-    const pen = r.cumContrib[idx];
+    const ee  = r.cumContribEe[idx];
+    const er  = r.cumContribEr[idx];
     const salPct = (sal / maxVal) * 100;
-    const penPct = (pen / maxVal) * 100;
+    const eePct  = (ee  / maxVal) * 100;
+    const erPct  = (er  / maxVal) * 100;
     const row = document.createElement('div');
     row.className = 'bar-row';
     row.innerHTML = `
       <div class="bar-year">Yr ${yr}</div>
       <div class="bar-track">
-        <div class="bar-salary" style="width:${salPct.toFixed(1)}%"></div>
-        <div class="bar-pension" style="left:${salPct.toFixed(1)}%;width:${penPct.toFixed(1)}%"></div>
+        <div class="bar-salary"     style="width:${salPct.toFixed(1)}%"></div>
+        <div class="bar-pension-ee" style="left:${salPct.toFixed(1)}%;width:${eePct.toFixed(1)}%"></div>
+        <div class="bar-pension-er" style="left:${(salPct + eePct).toFixed(1)}%;width:${erPct.toFixed(1)}%"></div>
       </div>
-      <div class="bar-val">${fmt(sal + pen)}</div>
+      <div class="bar-val">${fmt(sal + ee + er)}</div>
     `;
     chart.appendChild(row);
   });
